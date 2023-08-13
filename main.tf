@@ -17,5 +17,6 @@ resource "aws_vpc" "example" {
   
   tags = {
     Name = "tfcloud"
+    Sentinel = ""
   }
 }
