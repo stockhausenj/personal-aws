@@ -17,7 +17,7 @@ resource "aws_vpc" "private" {
   
   tags = {
     Name = "tfcloud"
-    ssentinel = ""
+    sentinel = ""
   }
 }
 
