@@ -5,6 +5,14 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+  cloud {
+    organization = "jay-stockhausen"
+
+    workspaces {
+      name = "personal-aws"
+    }
+  }
 }
 
 # Configure the AWS Provider
@@ -43,5 +51,6 @@ resource "aws_instance" "general" {
 
   tags = {
     Name = "general"
+    test = "tfcloud"
   }
 }
