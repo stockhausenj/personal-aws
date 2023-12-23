@@ -48,7 +48,7 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "general" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.large"
-  key_name      = "jstockhausen-private-dev"
+  key_name      = "macos"
 
   tags = {
     Name = "general"
