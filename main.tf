@@ -51,7 +51,8 @@ resource "aws_instance" "general" {
   key_name      = "macos"
 
   tags = {
-    Name = "general"
-    test = "tfcloud"
+    Name     = "general"
+    test     = "tfcloud"
+    schedule = "stop-at-10"
   }
 }
