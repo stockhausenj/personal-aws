@@ -50,7 +50,7 @@ resource "aws_instance" "general" {
   instance_type = "t2.large"
   key_name      = "macos"
 
-  root_block_device = {
+  root_block_device {
     volume_size = 20
   }
 
