@@ -46,6 +46,8 @@ data "aws_ami" "ubuntu_24" {
 }
 
 resource "aws_instance" "ubuntu_24" {
+  count = var.create_instance ? 1 : 0
+
   ami           = data.aws_ami.ubuntu_24.id
   instance_type = "t2.large"
   key_name      = "macos"
@@ -54,9 +56,15 @@ resource "aws_instance" "ubuntu_24" {
     volume_size = 20
   }
 
+  lifecycle {
+    ignore_changes = [
+      ami
+    ]
+  }
+
   tags = {
     Name     = "ubuntu-24"
     test     = "tfcloud"
-    schedule = "stop-at-10"
+    schedule = var.instance_schedule
   }
 }
