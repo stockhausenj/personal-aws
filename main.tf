@@ -18,6 +18,11 @@ terraform {
 # Configure the AWS Provider
 provider "aws" {
   region = "us-east-1"
+  default_tags {
+    tags = {
+      env = "test"
+    }
+  }
 }
 
 resource "aws_vpc" "private" {
@@ -66,5 +71,14 @@ resource "aws_instance" "ubuntu_24" {
     Name     = "ubuntu-24"
     test     = "tfcloud"
     schedule = var.instance_schedule
+  }
+}
+
+resource "aws_ecr_repository" "personal_test" {
+  name                 = "personal/test"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
   }
 }
