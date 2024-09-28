@@ -116,7 +116,7 @@ resource "aws_iam_role_policy" "github_ecr_all_policy" {
       "Action": [
         "ecr:GetAuthorizationToken",
         "ecr:List*",
-        "ecr:Describe*",
+        "ecr:Describe*"
       ],
       "Resource": "*"
     }]
@@ -131,7 +131,7 @@ resource "aws_iam_role_policy" "github_ecr_repo_policy" {
     "Statement": [{
       "Effect": "Allow",
       "Action": [
-        "ecr:GetAuthorizationToken"
+        "ecr:*"
       ],
       "Resource": [
         aws_ecr_repository.personal_test.arn,
