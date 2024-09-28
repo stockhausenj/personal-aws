@@ -85,6 +85,7 @@ resource "aws_iam_openid_connect_provider" "github" {
 resource "aws_iam_role" "github_actions_role" {
   name = "GitHubActionsRole"
 
+  # aka trust relationship policy
   assume_role_policy = jsonencode({
     "Version": "2012-10-17",
     "Statement": [{
@@ -105,8 +106,7 @@ resource "aws_iam_role" "github_actions_role" {
   })
 }
 
-# Step 3: Attach policies to the role
-resource "aws_iam_role_policy" "github_actions_policy" {
+resource "aws_iam_role_policy" "github_ecr_all_policy" {
   role = aws_iam_role.github_actions_role.id
 
   policy = jsonencode({
@@ -114,9 +114,28 @@ resource "aws_iam_role_policy" "github_actions_policy" {
     "Statement": [{
       "Effect": "Allow",
       "Action": [
-        "ecr:*"
+        "ecr:GetAuthorizationToken",
+        "ecr:List*",
+        "ecr:Describe*",
       ],
       "Resource": "*"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "github_ecr_repo_policy" {
+  role = aws_iam_role.github_actions_role.id
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken"
+      ],
+      "Resource": [
+        aws_ecr_repository.personal_test.arn,
+      ]
     }]
   })
 }
