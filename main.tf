@@ -74,6 +74,55 @@ resource "aws_instance" "ubuntu_24" {
   }
 }
 
+resource "aws_iam_openid_connect_provider" "github" {
+  url = "https://token.actions.githubusercontent.com"
+
+  client_id_list = ["sts.amazonaws.com"]
+
+  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
+}
+
+resource "aws_iam_role" "github_actions_role" {
+  name = "GitHubActionsRole"
+
+  assume_role_policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": aws_iam_openid_connect_provider.github.arn
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:stockhausenj/*:*"
+        },
+        "StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+        }
+      }
+    }]
+  })
+}
+
+# Step 3: Attach policies to the role
+resource "aws_iam_role_policy" "github_actions_policy" {
+  role = aws_iam_role.github_actions_role.id
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Action": [
+        "ecr:*"
+      ],
+      "Resource": [
+        aws_ecr_repository.personal_test.arn
+      ]
+    }]
+  })
+}
+
 resource "aws_ecr_repository" "personal_test" {
   name                 = "personal/test"
   image_tag_mutability = "MUTABLE"
