@@ -1,6 +1,5 @@
 terraform {
-  required_providers {
-    aws = {
+  required_providers { aws = {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
@@ -102,6 +101,21 @@ resource "aws_iam_role" "github_actions_role" {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
         }
       }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "github_lambda_policy" {
+  role = aws_iam_role.github_actions_role.id
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Action": [
+        "lambda:*"
+      ],
+      "Resource": "*"
     }]
   })
 }
