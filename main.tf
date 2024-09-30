@@ -163,3 +163,27 @@ resource "aws_ecr_repository" "personal_test" {
     scan_on_push = true
   }
 }
+
+resource "aws_ecr_lifecycle_policy" "personal_test" {
+  repository = aws_ecr_repository.example.name
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Expire images older than 1 days",
+            "selection": {
+                "tagStatus": "untagged",
+                "countType": "sinceImagePushed",
+                "countUnit": "days",
+                "countNumber": 1
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
+}
