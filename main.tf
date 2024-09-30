@@ -171,19 +171,6 @@ resource "aws_ecr_lifecycle_policy" "personal_test" {
 {
     "rules": [
         {
-            "rulePriority": 2,
-            "description": "Expire images older than 1 days",
-            "selection": {
-                "tagStatus": "untagged",
-                "countType": "sinceImagePushed",
-                "countUnit": "days",
-                "countNumber": 1
-            },
-            "action": {
-                "type": "expire"
-            }
-        },
-        {
             "rulePriority": 1,
             "description": "Keep last 1 image",
             "selection": {
