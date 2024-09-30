@@ -165,7 +165,7 @@ resource "aws_ecr_repository" "personal_test" {
 }
 
 resource "aws_ecr_lifecycle_policy" "personal_test" {
-  repository = aws_ecr_repository.example.name
+  repository = aws_ecr_repository.personal_test.name
 
   policy = <<EOF
 {
