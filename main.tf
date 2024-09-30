@@ -188,7 +188,6 @@ resource "aws_ecr_lifecycle_policy" "personal_test" {
             "description": "Keep last 1 image",
             "selection": {
                 "tagStatus": "untagged",
-                "tagPrefixList": ["v"],
                 "countType": "imageCountMoreThan",
                 "countNumber": 1
             },
