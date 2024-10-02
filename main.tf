@@ -25,11 +25,58 @@ provider "aws" {
   }
 }
 
+data "aws_vpc" "default" {
+  default = true
+}
+
+resource "aws_subnet" "general_private_subnet_1" {
+  vpc_id                  = data.aws_vpc.default.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "us-west-2a"
+  map_public_ip_on_launch = false
+}
+
+resource "aws_subnet" "general_private_subnet_2" {
+  vpc_id                  = data.aws_vpc.default.id
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = "us-west-2b"
+  map_public_ip_on_launch = false
+}
+
+resource "aws_eip" "nat_gateway_eip" {
+  vpc = true
+}
+
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat_gateway_eip.id
+  subnet_id     = "subnet-38939134"
+}
+
+resource "aws_route_table" "general_private_route_table" {
+  vpc_id = data.aws_vpc.default.id
+}
+
+resource "aws_route" "private_route" {
+  route_table_id         = aws_route_table.general_private_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat.id
+}
+
+resource "aws_route_table_association" "general_private_subnet_1" {
+  subnet_id      = aws_subnet.general_private_subnet_1.id
+  route_table_id = aws_route_table.general_private_route_table.id
+}
+
+resource "aws_route_table_association" "general_private_subnet_2" {
+  subnet_id      = aws_subnet.general_private_subnet_2.id
+  route_table_id = aws_route_table.general_private_route_table.id
+}
+
 resource "aws_vpc" "private" {
   cidr_block = "10.0.0.0/16"
-  
+
   tags = {
-    Name = "tfcloud"
+    Name     = "tfcloud"
     sentinel = ""
   }
 }
@@ -87,19 +134,19 @@ resource "aws_iam_role" "github_actions_role" {
 
   # aka trust relationship policy
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [{
-      "Effect": "Allow",
-      "Principal": {
-        "Federated": aws_iam_openid_connect_provider.github.arn
+    "Version" : "2012-10-17",
+    "Statement" : [{
+      "Effect" : "Allow",
+      "Principal" : {
+        "Federated" : aws_iam_openid_connect_provider.github.arn
       },
-      "Action": "sts:AssumeRoleWithWebIdentity",
-      "Condition": {
-        "StringLike": {
-          "token.actions.githubusercontent.com:sub": "repo:stockhausenj/*:*"
+      "Action" : "sts:AssumeRoleWithWebIdentity",
+      "Condition" : {
+        "StringLike" : {
+          "token.actions.githubusercontent.com:sub" : "repo:stockhausenj/*:*"
         },
-        "StringEquals": {
-          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+        "StringEquals" : {
+          "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
         }
       }
     }]
@@ -110,13 +157,13 @@ resource "aws_iam_role_policy" "github_lambda_policy" {
   role = aws_iam_role.github_actions_role.id
 
   policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [{
-      "Effect": "Allow",
-      "Action": [
+    "Version" : "2012-10-17",
+    "Statement" : [{
+      "Effect" : "Allow",
+      "Action" : [
         "lambda:*"
       ],
-      "Resource": "*"
+      "Resource" : "*"
     }]
   })
 }
@@ -125,15 +172,15 @@ resource "aws_iam_role_policy" "github_ecr_all_policy" {
   role = aws_iam_role.github_actions_role.id
 
   policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [{
-      "Effect": "Allow",
-      "Action": [
+    "Version" : "2012-10-17",
+    "Statement" : [{
+      "Effect" : "Allow",
+      "Action" : [
         "ecr:GetAuthorizationToken",
         "ecr:List*",
         "ecr:Describe*"
       ],
-      "Resource": "*"
+      "Resource" : "*"
     }]
   })
 }
@@ -142,13 +189,13 @@ resource "aws_iam_role_policy" "github_ecr_repo_policy" {
   role = aws_iam_role.github_actions_role.id
 
   policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [{
-      "Effect": "Allow",
-      "Action": [
+    "Version" : "2012-10-17",
+    "Statement" : [{
+      "Effect" : "Allow",
+      "Action" : [
         "ecr:*"
       ],
-      "Resource": [
+      "Resource" : [
         aws_ecr_repository.personal_test.arn,
       ]
     }]
