@@ -34,6 +34,10 @@ resource "aws_subnet" "general_private_subnet_1" {
   cidr_block              = "172.31.96.0/20"
   availability_zone       = "us-east-1f"
   map_public_ip_on_launch = false
+
+  tags = {
+    kind = "private"
+  }
 }
 
 resource "aws_subnet" "general_private_subnet_2" {
@@ -41,6 +45,10 @@ resource "aws_subnet" "general_private_subnet_2" {
   cidr_block              = "172.31.112.0/20"
   availability_zone       = "us-east-1f"
   map_public_ip_on_launch = false
+
+  tags = {
+    kind = "private"
+  }
 }
 
 resource "aws_eip" "nat_gateway_eip" {
