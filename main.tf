@@ -203,9 +203,7 @@ resource "aws_iam_role_policy" "github_ecr_repo_policy" {
       "Action" : [
         "ecr:*"
       ],
-      "Resource" : [
-        aws_ecr_repository.personal_test.arn,
-      ]
+      "Resource" : "*"
     }]
   })
 }
