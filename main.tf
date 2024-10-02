@@ -32,7 +32,7 @@ data "aws_vpc" "default" {
 resource "aws_subnet" "general_private_subnet_1" {
   vpc_id                  = data.aws_vpc.default.id
   cidr_block              = "172.31.96.0/20"
-  availability_zone       = "us-east-1f"
+  availability_zone       = "us-east-1d"
   map_public_ip_on_launch = false
 
   tags = {
