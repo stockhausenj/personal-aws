@@ -51,6 +51,7 @@ resource "aws_subnet" "general_private_subnet_2" {
   }
 }
 
+/*
 resource "aws_eip" "nat_gateway_eip" {
   vpc = true
 }
@@ -59,16 +60,19 @@ resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_gateway_eip.id
   subnet_id     = "subnet-38939134"
 }
+*/
 
 resource "aws_route_table" "general_private_route_table" {
   vpc_id = data.aws_vpc.default.id
 }
 
+/*
 resource "aws_route" "private_route" {
   route_table_id         = aws_route_table.general_private_route_table.id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat.id
 }
+*/
 
 resource "aws_route_table_association" "general_private_subnet_1" {
   subnet_id      = aws_subnet.general_private_subnet_1.id
